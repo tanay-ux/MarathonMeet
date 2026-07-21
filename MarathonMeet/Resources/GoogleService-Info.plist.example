@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Download your real GoogleService-Info.plist from Firebase Console:
+  Project Settings → Your apps → iOS app → Download GoogleService-Info.plist
+
+  Save it as: MarathonMeet/Resources/GoogleService-Info.plist
+  (Do NOT commit the real file — it is gitignored.)
+-->
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>REPLACE_ME</string>
+	<key>GCM_SENDER_ID</key>
+	<string>REPLACE_ME</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.marathonmeet.app</string>
+	<key>PROJECT_ID</key>
+	<string>YOUR_FIREBASE_PROJECT_ID</string>
+	<key>STORAGE_BUCKET</key>
+	<string>YOUR_FIREBASE_PROJECT_ID.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:REPLACE_ME:ios:REPLACE_ME</string>
+</dict>
+</plist>

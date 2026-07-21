@@ -1,0 +1,25 @@
+# Xcode
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+
+# Firebase
+GoogleService-Info.plist
+firebase/functions/node_modules/
+firebase/.firebaserc
+firebase/firebase-debug.log
+firebase-debug.log
+.firebaserc
+
+# macOS
+.DS_Store
+
+# Secrets
+*.p8
+*.p12

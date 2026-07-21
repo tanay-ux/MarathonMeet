@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="MarathonMeet" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>SF Marathon 2026 (approximate)</name>
+    <desc>Approximate San Francisco Marathon full course for map overlay. Replace with official GPX from HelloDrifter for race day.</desc>
+  </metadata>
+  <trk>
+    <name>Full Marathon</name>
+    <trkseg>
+      <trkpt lat="37.79350" lon="-122.39300"/>
+      <trkpt lat="37.79580" lon="-122.39200"/>
+      <trkpt lat="37.79850" lon="-122.39000"/>
+      <trkpt lat="37.80100" lon="-122.38700"/>
+      <trkpt lat="37.80350" lon="-122.38400"/>
+      <trkpt lat="37.80600" lon="-122.38000"/>
+      <trkpt lat="37.80850" lon="-122.37500"/>
+      <trkpt lat="37.81000" lon="-122.37000"/>
+      <trkpt lat="37.80800" lon="-122.36500"/>
+      <trkpt lat="37.80500" lon="-122.36000"/>
+      <trkpt lat="37.80200" lon="-122.35500"/>
+      <trkpt lat="37.80000" lon="-122.35000"/>
+      <trkpt lat="37.80200" lon="-122.34500"/>
+      <trkpt lat="37.80500" lon="-122.34000"/>
+      <trkpt lat="37.80800" lon="-122.33500"/>
+      <trkpt lat="37.81000" lon="-122.33000"/>
+      <trkpt lat="37.80850" lon="-122.32500"/>
+      <trkpt lat="37.80600" lon="-122.32000"/>
+      <trkpt lat="37.80300" lon="-122.31500"/>
+      <trkpt lat="37.80000" lon="-122.31000"/>
+      <trkpt lat="37.79700" lon="-122.30500"/>
+      <trkpt lat="37.79400" lon="-122.30000"/>
+      <trkpt lat="37.77000" lon="-122.30000"/>
+      <trkpt lat="37.76800" lon="-122.31000"/>
+      <trkpt lat="37.76600" lon="-122.32000"/>
+      <trkpt lat="37.76400" lon="-122.33000"/>
+      <trkpt lat="37.76200" lon="-122.34000"/>
+      <trkpt lat="37.76000" lon="-122.35000"/>
+      <trkpt lat="37.75800" lon="-122.36000"/>
+      <trkpt lat="37.75600" lon="-122.37000"/>
+      <trkpt lat="37.75400" lon="-122.38000"/>
+      <trkpt lat="37.75200" lon="-122.39000"/>
+      <trkpt lat="37.75000" lon="-122.40000"/>
+      <trkpt lat="37.75200" lon="-122.41000"/>
+      <trkpt lat="37.75500" lon="-122.42000"/>
+      <trkpt lat="37.75800" lon="-122.43000"/>
+      <trkpt lat="37.76200" lon="-122.44000"/>
+      <trkpt lat="37.76600" lon="-122.45000"/>
+      <trkpt lat="37.77000" lon="-122.46000"/>
+      <trkpt lat="37.77400" lon="-122.47000"/>
+      <trkpt lat="37.77800" lon="-122.47500"/>
+      <trkpt lat="37.78200" lon="-122.47000"/>
+      <trkpt lat="37.78600" lon="-122.46000"/>
+      <trkpt lat="37.79000" lon="-122.45000"/>
+      <trkpt lat="37.79200" lon="-122.44000"/>
+      <trkpt lat="37.79300" lon="-122.43000"/>
+      <trkpt lat="37.79200" lon="-122.42000"/>
+      <trkpt lat="37.79100" lon="-122.41000"/>
+      <trkpt lat="37.79000" lon="-122.40000"/>
+      <trkpt lat="37.79100" lon="-122.39500"/>
+      <trkpt lat="37.79350" lon="-122.39300"/>
+    </trkseg>
+  </trk>
+</gpx>
