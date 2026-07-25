@@ -33,7 +33,11 @@ struct RolePickerView: View {
                     .neoStaggeredAppear(index: 0)
 
                     VStack(spacing: 16) {
-                        NavigationLink(value: AppRoute.createRunner) {
+                        // Buttons + path (not NavigationLink) so system link tint
+                        // cannot force card fills to black.
+                        Button {
+                            path.append(AppRoute.createRunner)
+                        } label: {
                             NeoRoleButton(
                                 title: "I'm Running",
                                 subtitle: "Share your location during the race",
@@ -45,7 +49,9 @@ struct RolePickerView: View {
                         .buttonStyle(NeoCardPressStyle())
                         .neoStaggeredAppear(index: 1)
 
-                        NavigationLink(value: AppRoute.joinSpectator) {
+                        Button {
+                            path.append(AppRoute.joinSpectator)
+                        } label: {
                             NeoRoleButton(
                                 title: "I'm Spectating",
                                 subtitle: "Track the runner & get proximity alerts",

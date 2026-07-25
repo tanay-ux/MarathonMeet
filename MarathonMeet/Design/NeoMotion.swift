@@ -33,9 +33,12 @@ enum NeoHaptics {
 // MARK: - Card / button press styles
 
 /// Neo-brutalist push-down for tappable cards (role picker, etc.)
+/// Behaves like `.plain` so system button chrome cannot recolor fills.
 struct NeoCardPressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .opacity(1)
+            .saturation(1)
             .offset(
                 x: configuration.isPressed ? Neo.shadow : 0,
                 y: configuration.isPressed ? Neo.shadow : 0

@@ -20,6 +20,7 @@ struct ContentView: View {
             }
         }
         .animation(NeoMotion.screen, value: sessionService.currentParticipant?.uid)
+        .preferredColorScheme(.light)
     }
 }
 

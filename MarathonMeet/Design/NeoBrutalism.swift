@@ -8,29 +8,34 @@ enum Neo {
     static let shadow: CGFloat = 5
     static let radius: CGFloat = 14
 
+    /// Fixed sRGB colors (UIColor) so NavigationLink / dark mode never recolors fills to black.
+    private static func rgb(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat) -> Color {
+        Color(uiColor: UIColor(red: r, green: g, blue: b, alpha: 1))
+    }
+
     /// Warm cream — primary screen background
-    static let canvas = Color(red: 1.0, green: 0.96, blue: 0.82)
-    static let ink = Color.black
-    static let paper = Color.white
+    static let canvas = rgb(1.0, 0.96, 0.82)
+    static let ink = rgb(0, 0, 0)
+    static let paper = rgb(1, 1, 1)
 
     /// Fixed secondary/tertiary grays — do not use `.opacity()` on ink for body copy
-    static let inkSecondary = Color(red: 0.24, green: 0.24, blue: 0.24)   // ≥4.5:1 on canvas & paper
-    static let inkTertiary = Color(red: 0.38, green: 0.38, blue: 0.38)    // ≥4.5:1 on paper; large text on canvas
+    static let inkSecondary = rgb(0.24, 0.24, 0.24)   // ≥4.5:1 on canvas & paper
+    static let inkTertiary = rgb(0.38, 0.38, 0.38)    // ≥4.5:1 on paper; large text on canvas
 
     /// Accent fills — always pair with `Neo.ink` for text/icons on top
-    static let coral = Color(red: 1.0, green: 0.42, blue: 0.38)
-    static let electric = Color(red: 0.12, green: 0.35, blue: 0.78)       // darkened for contrast with white if needed
-    static let electricBright = Color(red: 0.30, green: 0.59, blue: 1.0)  // decorative fills only — ink text on top
-    static let lime = Color(red: 0.55, green: 0.72, blue: 0.08)            // darkened lime for fills + ink text
-    static let limeBright = Color(red: 0.78, green: 0.98, blue: 0.21)     // badges — ink text only
-    static let sun = Color(red: 0.88, green: 0.68, blue: 0.0)             // darkened amber — ink text on top
-    static let sunBright = Color(red: 1.0, green: 0.88, blue: 0.33)       // small badges only
-    static let pink = Color(red: 0.78, green: 0.12, blue: 0.45)          // alert cards — white or ink
-    static let pinkSoft = Color(red: 1.0, green: 0.82, blue: 0.91)        // alert card background
-    static let mint = Color(red: 0.0, green: 0.55, blue: 0.48)            // section labels
-    static let mintSoft = Color(red: 0.85, green: 1.0, blue: 0.96)        // card tint
-    static let lavender = Color(red: 0.45, green: 0.35, blue: 0.78)
-    static let lavenderSoft = Color(red: 0.91, green: 0.88, blue: 1.0)
+    static let coral = rgb(1.0, 0.42, 0.38)
+    static let electric = rgb(0.12, 0.35, 0.78)       // darkened for contrast with white if needed
+    static let electricBright = rgb(0.30, 0.59, 1.0)  // decorative fills only — ink text on top
+    static let lime = rgb(0.55, 0.72, 0.08)            // darkened lime for fills + ink text
+    static let limeBright = rgb(0.78, 0.98, 0.21)     // badges — ink text only
+    static let sun = rgb(0.88, 0.68, 0.0)             // darkened amber — ink text on top
+    static let sunBright = rgb(1.0, 0.88, 0.33)       // small badges only
+    static let pink = rgb(0.78, 0.12, 0.45)          // alert cards — white or ink
+    static let pinkSoft = rgb(1.0, 0.82, 0.91)        // alert card background
+    static let mint = rgb(0.0, 0.55, 0.48)            // section labels
+    static let mintSoft = rgb(0.85, 1.0, 0.96)        // card tint
+    static let lavender = rgb(0.45, 0.35, 0.78)
+    static let lavenderSoft = rgb(0.91, 0.88, 1.0)
 
     /// Navigation chrome — paper, not yellow, so system titles stay dark
     static let navBar = paper
@@ -84,20 +89,20 @@ struct NeoCardModifier: ViewModifier {
     var shadowColor: Color = Neo.ink
 
     func body(content: Content) -> some View {
+        // ZStack (not stacked `.background`) so Button/NavigationLink tint
+        // cannot collapse the fill into the black drop-shadow.
         content
-            .background(
-                RoundedRectangle(cornerRadius: Neo.radius)
-                    .fill(shadowColor)
-                    .offset(x: Neo.shadow, y: Neo.shadow)
-            )
-            .background(
-                RoundedRectangle(cornerRadius: Neo.radius)
-                    .fill(fill)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: Neo.radius)
-                    .stroke(Neo.ink, lineWidth: Neo.border)
-            )
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: Neo.radius)
+                        .fill(shadowColor)
+                        .offset(x: Neo.shadow, y: Neo.shadow)
+                    RoundedRectangle(cornerRadius: Neo.radius)
+                        .fill(fill)
+                    RoundedRectangle(cornerRadius: Neo.radius)
+                        .strokeBorder(Neo.ink, lineWidth: Neo.border)
+                }
+            }
     }
 }
 
@@ -108,6 +113,7 @@ extension View {
 
     func neoScreen() -> some View {
         background(Neo.canvas.ignoresSafeArea())
+            .preferredColorScheme(.light)
     }
 }
 
@@ -119,28 +125,27 @@ struct NeoButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
+        let face = isEnabled ? fill : fill.opacity(0.45)
         configuration.label
             .font(isCompact ? .caption.weight(.black) : .headline.weight(.black))
             .foregroundStyle(Neo.ink)
             .padding(.horizontal, isCompact ? 10 : 18)
             .padding(.vertical, isCompact ? 6 : 12)
             .frame(maxWidth: isCompact ? nil : .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Neo.ink)
-                    .offset(
-                        x: configuration.isPressed ? 2 : Neo.shadow,
-                        y: configuration.isPressed ? 2 : Neo.shadow
-                    )
-            )
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isEnabled ? fill : fill.opacity(0.45))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Neo.ink, lineWidth: Neo.border)
-            )
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Neo.ink)
+                        .offset(
+                            x: configuration.isPressed ? 2 : Neo.shadow,
+                            y: configuration.isPressed ? 2 : Neo.shadow
+                        )
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(face)
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(Neo.ink, lineWidth: Neo.border)
+                }
+            }
             .offset(x: configuration.isPressed ? 2 : 0, y: configuration.isPressed ? 2 : 0)
             .opacity(isEnabled ? 1 : 0.75)
             .animation(NeoMotion.press, value: configuration.isPressed)

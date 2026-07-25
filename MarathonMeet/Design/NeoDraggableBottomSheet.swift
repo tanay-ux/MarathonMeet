@@ -38,17 +38,17 @@ struct NeoDraggableBottomSheet<Collapsed: View, Expanded: View>: View {
         }
         .frame(height: height, alignment: .top)
         .frame(maxWidth: .infinity)
-        .background(Neo.paper)
-        .clipShape(RoundedRectangle(cornerRadius: Neo.radius, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: Neo.radius, style: .continuous)
-                .stroke(Neo.ink, lineWidth: Neo.border)
-        )
-        .background(
-            RoundedRectangle(cornerRadius: Neo.radius, style: .continuous)
-                .fill(Neo.ink)
-                .offset(x: Neo.shadow, y: Neo.shadow)
-        )
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: Neo.radius, style: .continuous)
+                    .fill(Neo.ink)
+                    .offset(x: Neo.shadow, y: Neo.shadow)
+                RoundedRectangle(cornerRadius: Neo.radius, style: .continuous)
+                    .fill(Neo.paper)
+                RoundedRectangle(cornerRadius: Neo.radius, style: .continuous)
+                    .strokeBorder(Neo.ink, lineWidth: Neo.border)
+            }
+        }
         .animation(NeoMotion.springSmooth, value: isExpanded)
         .gesture(dragGesture(minHeight: minH, maxHeight: maxH))
     }
