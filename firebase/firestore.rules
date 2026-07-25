@@ -1,15 +1,22 @@
 rules_version = '2';
+
+// No user accounts — access is gated by knowing the 6-character session code.
+// Suitable for a small private friend group. Do not use for public production apps.
+
 service cloud.firestore {
   match /databases/{database}/documents {
     match /sessions/{sessionCode} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
+      allow read, create: if true;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['isActive']);
 
       match /participants/{participantId} {
-        allow read: if request.auth != null;
-        allow create: if request.auth != null && request.auth.uid == participantId;
-        allow update: if request.auth != null && request.auth.uid == participantId;
+        allow read: if true;
+        allow create: if request.resource.data.keys().hasAll([
+          'displayName', 'role', 'thresholdMeters'
+        ]);
+        allow update: if true;
+        allow delete: if false;
       }
     }
   }

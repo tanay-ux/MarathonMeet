@@ -27,6 +27,7 @@ struct SpectatorMapView: View {
                                 subtitle: "About \(Int(alert.distanceMeters)) m away"
                             )
                             .padding(.horizontal, Neo.spaceMD)
+                            .neoPopIn()
                             .transition(.move(edge: .top).combined(with: .opacity))
                         }
 
@@ -42,6 +43,8 @@ struct SpectatorMapView: View {
                         .padding(.horizontal, Neo.spaceMD)
                         .padding(.bottom, Neo.spaceSM)
                     }
+                    .animation(NeoMotion.springSmooth, value: sessionService.latestProximityAlert?.personName)
+                    .animation(NeoMotion.springSmooth, value: isSheetExpanded)
                 }
             }
             .neoNavigation()
@@ -53,14 +56,19 @@ struct SpectatorMapView: View {
                         Image(systemName: "map")
                             .font(.headline.weight(.black))
                     }
+                    .buttonStyle(NeoToolbarPressStyle())
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Settings") { showSettings = true }
                         .font(.subheadline.weight(.black))
+                        .buttonStyle(NeoToolbarPressStyle())
                 }
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
+            }
+            .sensoryFeedback(.selection, trigger: isSheetExpanded) { _, expanded in
+                expanded
             }
             .fileImporter(
                 isPresented: $showImporter,

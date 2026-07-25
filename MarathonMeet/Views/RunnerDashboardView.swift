@@ -10,19 +10,26 @@ struct RunnerDashboardView: View {
             ScrollView {
                 VStack(spacing: Neo.spaceLG) {
                     statusCard
+                        .neoStaggeredAppear(index: 0)
 
                     if let alert = sessionService.latestProximityAlert {
                         NeoAlertBanner(
                             title: "\(alert.personName) is nearby!",
                             subtitle: "About \(Int(alert.distanceMeters)) m away"
                         )
+                        .neoPopIn()
+                        .transition(.scale(scale: 0.9).combined(with: .opacity))
                     }
 
                     sessionInfoCard
+                        .neoStaggeredAppear(index: 1)
                     locationCard
+                        .neoStaggeredAppear(index: 2)
                     thresholdCard
+                        .neoStaggeredAppear(index: 3)
                 }
                 .padding(Neo.spaceLG)
+                .animation(NeoMotion.springSmooth, value: sessionService.latestProximityAlert?.personName)
             }
             .neoScreen()
             .neoNavigation()
@@ -33,10 +40,14 @@ struct RunnerDashboardView: View {
                     Button("Settings") { showSettings = true }
                         .font(.subheadline.weight(.black))
                         .neoPrimaryText()
+                        .buttonStyle(NeoToolbarPressStyle())
                 }
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
+            }
+            .sensoryFeedback(.selection, trigger: showSettings) { _, isPresented in
+                isPresented
             }
             .onAppear { ensureTracking() }
         }
@@ -44,7 +55,11 @@ struct RunnerDashboardView: View {
 
     private var statusCard: some View {
         VStack(spacing: 14) {
-            NeoIconBadge(systemName: "location.fill", fill: Neo.limeBright)
+            NeoIconBadge(fill: Neo.limeBright) {
+                Image(systemName: "location.fill")
+                    .font(.title2.weight(.black))
+                    .neoPrimaryText()
+            }
             Text("SHARING LOCATION")
                 .font(.title2.weight(.black))
                 .neoPrimaryText()

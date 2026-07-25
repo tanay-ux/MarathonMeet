@@ -18,6 +18,7 @@ struct JoinSessionView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 NeoTextField(label: "Your Name", text: $displayName, placeholder: "Tanay")
+                    .neoStaggeredAppear(index: 0)
 
                 NeoTextField(
                     label: "Session Code",
@@ -25,10 +26,12 @@ struct JoinSessionView: View {
                     placeholder: "SF26AB",
                     autocapitalize: .characters
                 )
+                .neoStaggeredAppear(index: 1)
 
                 Text("Ask the runner for their 6-character session code.")
                     .font(.caption.weight(.semibold))
                     .neoSecondaryText()
+                    .neoStaggeredAppear(index: 2)
 
                 if let errorMessage {
                     Text(errorMessage)
@@ -37,6 +40,7 @@ struct JoinSessionView: View {
                         .padding(14)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .neoCard(fill: Neo.pinkSoft)
+                        .neoPopIn()
                 }
 
                 Button {
@@ -49,6 +53,7 @@ struct JoinSessionView: View {
                 }
                 .buttonStyle(NeoButtonStyle(fill: accent))
                 .disabled(!canJoin || isJoining)
+                .neoStaggeredAppear(index: 3)
             }
             .padding(20)
         }
@@ -75,6 +80,7 @@ struct JoinSessionView: View {
             if let token = notificationService.fcmToken {
                 try? await sessionService.updateFCMToken(token)
             }
+            NeoHaptics.success()
             startLocationTracking()
         } catch {
             errorMessage = error.localizedDescription

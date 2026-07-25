@@ -28,8 +28,6 @@ targets:
       - path: MarathonMeet/Assets.xcassets
     dependencies:
       - package: Firebase
-        product: FirebaseAuth
-      - package: Firebase
         product: FirebaseFirestore
       - package: Firebase
         product: FirebaseMessaging

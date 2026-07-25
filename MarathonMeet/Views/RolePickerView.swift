@@ -18,9 +18,7 @@ struct RolePickerView: View {
                                 .fill(Neo.coral)
                                 .frame(width: 96, height: 96)
                                 .overlay(Circle().stroke(Neo.ink, lineWidth: Neo.border))
-                            Image(systemName: "figure.run")
-                                .font(.system(size: 40, weight: .black))
-                                .foregroundStyle(Neo.ink)
+                            NeoAppLogoIcon(size: 48)
                         }
 
                         NeoTitle(text: "MarathonMeet")
@@ -32,27 +30,32 @@ struct RolePickerView: View {
                             .padding(.horizontal, 8)
                     }
                     .padding(.top, 32)
+                    .neoStaggeredAppear(index: 0)
 
                     VStack(spacing: 16) {
                         NavigationLink(value: AppRoute.createRunner) {
                             NeoRoleButton(
                                 title: "I'm Running",
                                 subtitle: "Share your location during the race",
-                                icon: "figure.run",
                                 fill: Neo.coral
-                            )
+                            ) {
+                                NeoRunnerRoleIcon()
+                            }
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(NeoCardPressStyle())
+                        .neoStaggeredAppear(index: 1)
 
                         NavigationLink(value: AppRoute.joinSpectator) {
                             NeoRoleButton(
                                 title: "I'm Spectating",
                                 subtitle: "Track the runner & get proximity alerts",
-                                icon: "binoculars.fill",
                                 fill: Neo.electricBright
-                            )
+                            ) {
+                                NeoSpectatorRoleIcon()
+                            }
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(NeoCardPressStyle())
+                        .neoStaggeredAppear(index: 2)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -61,14 +64,17 @@ struct RolePickerView: View {
             .neoScreen()
             .neoNavigation()
             .navigationDestination(for: AppRoute.self) { route in
-                switch route {
-                case .createRunner:
-                    CreateSessionView()
-                case .joinSpectator:
-                    JoinSessionView(role: .spectator)
-                case .joinRunner:
-                    JoinSessionView(role: .runner)
+                Group {
+                    switch route {
+                    case .createRunner:
+                        CreateSessionView()
+                    case .joinSpectator:
+                        JoinSessionView(role: .spectator)
+                    case .joinRunner:
+                        JoinSessionView(role: .runner)
+                    }
                 }
+                .neoStaggeredAppear(index: 0, baseDelay: 0.04)
             }
         }
     }

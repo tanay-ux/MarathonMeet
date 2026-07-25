@@ -25,15 +25,14 @@ struct NeoDraggableBottomSheet<Collapsed: View, Expanded: View>: View {
                         .padding(.horizontal, Neo.spaceLG)
                         .padding(.bottom, Neo.spaceXL)
                 }
+                .transition(.opacity.combined(with: .move(edge: .bottom)))
             } else {
                 collapsed()
                     .padding(.horizontal, Neo.spaceLG)
                     .padding(.bottom, Neo.spaceMD)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
-                            isExpanded = true
-                        }
+                        expandSheet()
                     }
             }
         }
@@ -50,6 +49,7 @@ struct NeoDraggableBottomSheet<Collapsed: View, Expanded: View>: View {
                 .fill(Neo.ink)
                 .offset(x: Neo.shadow, y: Neo.shadow)
         )
+        .animation(NeoMotion.springSmooth, value: isExpanded)
         .gesture(dragGesture(minHeight: minH, maxHeight: maxH))
     }
 
@@ -67,21 +67,33 @@ struct NeoDraggableBottomSheet<Collapsed: View, Expanded: View>: View {
                         .neoSecondaryText()
                     Spacer()
                     Button {
-                        withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
-                            isExpanded = false
-                        }
+                        collapseSheet()
                     } label: {
                         Image(systemName: "chevron.down")
                             .font(.caption.weight(.black))
                             .neoPrimaryText()
                             .padding(8)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(NeoToolbarPressStyle())
                 }
                 .padding(.horizontal, Neo.spaceLG)
             }
         }
         .padding(.bottom, Neo.spaceXS)
+    }
+
+    private func expandSheet() {
+        withAnimation(NeoMotion.springSmooth) {
+            isExpanded = true
+        }
+        NeoHaptics.light()
+    }
+
+    private func collapseSheet() {
+        withAnimation(NeoMotion.springSmooth) {
+            isExpanded = false
+        }
+        NeoHaptics.light()
     }
 
     private func dragGesture(minHeight: CGFloat, maxHeight: CGFloat) -> some Gesture {
@@ -93,8 +105,13 @@ struct NeoDraggableBottomSheet<Collapsed: View, Expanded: View>: View {
                 let resting = isExpanded ? maxHeight : minHeight
                 let projected = resting - value.translation.height
                 let midpoint = (minHeight + maxHeight) / 2
-                withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
-                    isExpanded = projected > midpoint
+                let shouldExpand = projected > midpoint
+                let wasExpanded = isExpanded
+                withAnimation(NeoMotion.springSmooth) {
+                    isExpanded = shouldExpand
+                }
+                if shouldExpand != wasExpanded {
+                    NeoHaptics.light()
                 }
             }
     }

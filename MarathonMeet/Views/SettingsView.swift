@@ -47,6 +47,7 @@ struct SettingsView: View {
                     Button("Done") { dismiss() }
                         .font(.subheadline.weight(.black))
                         .neoPrimaryText()
+                        .buttonStyle(NeoToolbarPressStyle())
                 }
             }
         }

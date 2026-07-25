@@ -9,14 +9,17 @@ struct ContentView: View {
                 switch participant.role {
                 case .runner:
                     RunnerDashboardView()
+                        .neoScreenTransition()
                 case .spectator:
                     SpectatorMapView()
+                        .neoScreenTransition()
                 }
             } else {
                 RolePickerView()
+                    .neoScreenTransition()
             }
         }
-        .animation(.easeInOut, value: sessionService.currentParticipant?.uid)
+        .animation(NeoMotion.screen, value: sessionService.currentParticipant?.uid)
     }
 }
 

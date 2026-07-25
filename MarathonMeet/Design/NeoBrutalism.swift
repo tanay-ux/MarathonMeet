@@ -143,20 +143,39 @@ struct NeoButtonStyle: ButtonStyle {
             )
             .offset(x: configuration.isPressed ? 2 : 0, y: configuration.isPressed ? 2 : 0)
             .opacity(isEnabled ? 1 : 0.75)
-            .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+            .animation(NeoMotion.press, value: configuration.isPressed)
+            .sensoryFeedback(.impact(flex: .soft), trigger: configuration.isPressed) { _, isPressed in
+                isPressed
+            }
     }
 }
 
-struct NeoIconBadge: View {
-    let systemName: String
+// MARK: - Role Button
+
+struct NeoRoleButton<Icon: View>: View {
+    let title: String
+    let subtitle: String
     let fill: Color
+    @ViewBuilder let icon: () -> Icon
 
     var body: some View {
-        Image(systemName: systemName)
-            .font(.title2.weight(.black))
-            .foregroundStyle(Neo.ink)
-            .frame(width: 52, height: 52)
-            .neoCard(fill: fill)
+        HStack(spacing: 16) {
+            NeoIconBadge(fill: fill, icon: icon)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline.weight(.black))
+                    .neoPrimaryText()
+                Text(subtitle)
+                    .font(.caption.weight(.semibold))
+                    .neoSecondaryText()
+            }
+            Spacer()
+            Image(systemName: "arrow.right")
+                .font(.headline.weight(.black))
+                .neoPrimaryText()
+        }
+        .padding(16)
+        .neoCard(fill: Neo.paper)
     }
 }
 
@@ -218,7 +237,11 @@ struct NeoAlertBanner: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            NeoIconBadge(systemName: "bell.fill", fill: Neo.pinkSoft)
+            NeoIconBadge(fill: Neo.pinkSoft) {
+                Image(systemName: "bell.fill")
+                    .font(.title2.weight(.black))
+                    .neoPrimaryText()
+            }
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.headline.weight(.black))
@@ -231,35 +254,6 @@ struct NeoAlertBanner: View {
         }
         .padding(14)
         .neoCard(fill: Neo.pinkSoft)
-    }
-}
-
-// MARK: - Role Button
-
-struct NeoRoleButton: View {
-    let title: String
-    let subtitle: String
-    let icon: String
-    let fill: Color
-
-    var body: some View {
-        HStack(spacing: 16) {
-            NeoIconBadge(systemName: icon, fill: fill)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.headline.weight(.black))
-                    .neoPrimaryText()
-                Text(subtitle)
-                    .font(.caption.weight(.semibold))
-                    .neoSecondaryText()
-            }
-            Spacer()
-            Image(systemName: "arrow.right")
-                .font(.headline.weight(.black))
-                .neoPrimaryText()
-        }
-        .padding(16)
-        .neoCard(fill: Neo.paper)
     }
 }
 
@@ -387,7 +381,11 @@ struct NeoVolumeSlider: View {
     private func dragGesture(travelWidth: CGFloat) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { gesture in
-                value = snappedValue(for: gesture.location.x, travelWidth: travelWidth)
+                let newValue = snappedValue(for: gesture.location.x, travelWidth: travelWidth)
+                if Int(newValue) != Int(value) {
+                    NeoHaptics.selection()
+                }
+                value = newValue
             }
     }
 

@@ -1,5 +1,4 @@
 import Foundation
-import FirebaseAuth
 import FirebaseFirestore
 import Combine
 
@@ -14,7 +13,7 @@ final class SessionService: ObservableObject {
 
     private let db = Firestore.firestore()
     private var participantsListener: ListenerRegistration?
-    private var userID: String?
+    private let participantID = LocalParticipantStore.participantID
     private var lastLocalAlertKey: String?
 
     var runner: Participant? {
@@ -25,24 +24,14 @@ final class SessionService: ObservableObject {
         participants.filter { $0.role == .spectator }
     }
 
-    func signInAnonymously() async throws {
-        if Auth.auth().currentUser == nil {
-            _ = try await Auth.auth().signInAnonymously()
-        }
-        userID = Auth.auth().currentUser?.uid
-    }
-
     func createSession(displayName: String, courseName: String = "SF Marathon 2026") async throws -> String {
-        try await signInAnonymously()
-        guard let uid = userID else { throw SessionError.notAuthenticated }
-
         isLoading = true
         defer { isLoading = false }
 
         let code = Self.generateSessionCode()
         let session = RaceSession(code: code, courseName: courseName)
         let participant = Participant(
-            uid: uid,
+            uid: participantID,
             displayName: displayName,
             role: .runner,
             thresholdMeters: 500
@@ -62,9 +51,6 @@ final class SessionService: ObservableObject {
     }
 
     func joinSession(code: String, displayName: String, role: ParticipantRole) async throws {
-        try await signInAnonymously()
-        guard let uid = userID else { throw SessionError.notAuthenticated }
-
         isLoading = true
         defer { isLoading = false }
 
@@ -85,7 +71,7 @@ final class SessionService: ObservableObject {
         }
 
         let participant = Participant(
-            uid: uid,
+            uid: participantID,
             displayName: displayName,
             role: role,
             thresholdMeters: role == .runner ? 500 : 200
@@ -204,18 +190,15 @@ final class SessionService: ObservableObject {
 }
 
 enum SessionError: LocalizedError {
-    case notAuthenticated
     case sessionNotFound
     case runnerAlreadyExists
 
     var errorDescription: String? {
         switch self {
-        case .notAuthenticated: return "Could not sign in. Check your connection."
         case .sessionNotFound: return "Session not found. Check the code and try again."
         case .runnerAlreadyExists: return "This session already has a runner."
         }
     }
 }
 
-// Bridge Firebase Timestamp to our protocol
 extension Timestamp: TimestampLike {}

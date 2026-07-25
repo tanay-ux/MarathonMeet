@@ -34,9 +34,11 @@ open MarathonMeet.xcodeproj
 1. Go to [Firebase Console](https://console.firebase.google.com/) → Create project **MarathonMeet**
 2. Add an **iOS app** with bundle ID `com.marathonmeet.app`
 3. Download `GoogleService-Info.plist` → save to `MarathonMeet/Resources/GoogleService-Info.plist`
-4. Enable **Authentication** → Sign-in method → **Anonymous**
-5. Create **Firestore** database (production mode is fine with our rules)
-6. Enable **Cloud Messaging**
+4. Create **Firestore** database (production mode is fine with our rules)
+5. Enable **Cloud Messaging**
+6. **No Authentication required** — users enter a name only; each device gets a random local ID
+
+> **Note:** Firestore rules are open for session-based access (no login). This is intentional for a private friend group gated by session codes. Don't publish the app publicly without tightening rules.
 
 ### 3. Configure APNs for push notifications
 
