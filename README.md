@@ -11,6 +11,12 @@ Track a marathon runner and get proximity alerts when you're close enough to che
 - **watchOS companion** — haptic alerts on the runner's wrist
 - **GPX course overlay** — bundled SF Marathon route + import your own
 
+## Preview the UI without a Mac
+
+A clickable [browser prototype](prototype/) mirrors every screen, with a simulated runner
+moving along the course. Open `prototype/index.html`, or browse the exported
+[screen PNGs](design/screens/).
+
 ## Requirements
 
 - **Mac with Xcode 16+** (iOS apps must be built on macOS)

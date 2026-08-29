@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MarathonMeet — Browser Prototype</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="workbench">
+    <header class="wb-header">
+      <div>
+        <h1>MarathonMeet</h1>
+        <p>Clickable browser prototype of the iOS + watchOS interface.</p>
+      </div>
+      <div class="wb-legend" id="palette"></div>
+    </header>
+
+    <main class="wb-main">
+      <section class="wb-stage">
+        <div class="device" id="device">
+          <div class="device-notch"></div>
+          <div class="device-screen" id="screen"></div>
+          <div class="device-home"></div>
+        </div>
+
+        <div class="watch" id="watch">
+          <div class="watch-screen" id="watch-screen"></div>
+        </div>
+      </section>
+
+      <aside class="wb-panel">
+        <h2>Screens</h2>
+        <div class="wb-screens" id="screen-buttons"></div>
+
+        <h2>Live simulation</h2>
+        <div class="wb-controls">
+          <label class="wb-toggle">
+            <input type="checkbox" id="sim-toggle" checked />
+            <span>Runner moving along course</span>
+          </label>
+
+          <label class="wb-range">
+            <span>Runner position on course</span>
+            <input type="range" id="sim-progress" min="0" max="100" value="34" />
+          </label>
+
+          <label class="wb-range">
+            <span>Runner pace (min/km)</span>
+            <input type="range" id="sim-pace" min="4" max="9" step="0.5" value="6" />
+          </label>
+
+          <button class="wb-btn" id="sim-approach">Simulate runner approaching</button>
+          <button class="wb-btn ghost" id="sim-reset">Reset simulation</button>
+        </div>
+
+        <h2>State</h2>
+        <dl class="wb-state" id="state-readout"></dl>
+
+        <p class="wb-note">
+          Prototype only — no Firebase, GPS, or push. Distances are computed from the
+          bundled SF Marathon course using the same haversine math as the app.
+        </p>
+      </aside>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

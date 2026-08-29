@@ -1,0 +1,14 @@
+{
+  "name": "marathonmeet-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Browser prototype and PNG screen exporter for the MarathonMeet iOS app",
+  "type": "module",
+  "scripts": {
+    "start": "npx --yes serve . -l 4173",
+    "export": "node export-pngs.mjs"
+  },
+  "devDependencies": {
+    "puppeteer": "^24.10.0"
+  }
+}
