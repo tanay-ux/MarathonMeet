@@ -33,9 +33,10 @@ const WATCH_SCREENS = [
 ];
 
 async function capture(page, { target, screen, file, selector }) {
-  await page.goto(`${indexUrl}?export=${target}&screen=${screen}`, { waitUntil: 'load' });
+  await page.goto(`${indexUrl}?export=${target}&screen=${screen}`, { waitUntil: 'networkidle0' });
   await page.waitForFunction(() => window.__protoReady === true, { timeout: 15000 });
-  await new Promise((resolve) => setTimeout(resolve, 250));
+  await page.evaluate(() => document.fonts.ready);
+  await new Promise((resolve) => setTimeout(resolve, 350));
 
   const element = await page.$(selector);
   if (!element) throw new Error(`Missing ${selector} for ${screen}`);

@@ -219,18 +219,19 @@ function navBar(title, { back = null, right = null, left = null } = {}) {
   return `
     <div class="neo-nav">
       <div class="nav-side">${leftSlot}</div>
-      <div>${esc(title)}</div>
+      <div class="nav-title">${esc(title)}</div>
       <div class="nav-side right">${right || ''}</div>
     </div>`;
 }
 
-function slider({ value, min = 100, max = 1000, step = 50, accent = 'coral', label = null }) {
+function slider({ value, min = 100, max = 1000, step = 50, accent = 'coral', label = null, hint = null }) {
   const fraction = (value - min) / (max - min);
   const accentClass = accent === 'electric' ? 'electric' : '';
   return `
     <div class="slider">
-      ${label ? `<span class="neo-label" style="background: var(--${accent === 'electric' ? 'electric-bright' : 'coral'}); align-self: flex-start;">${esc(label)}</span>` : ''}
-      <p class="slider-value">${value} METERS</p>
+      ${label ? `<p class="section-label ${accentClass}">${esc(label)}</p>` : ''}
+      ${hint ? `<p class="slider-hint">${esc(hint)}</p>` : ''}
+      <p class="slider-value">${value} m</p>
       <div class="slider-track">
         <div class="slider-rail"></div>
         <div class="slider-fill ${accentClass}" style="width: calc(${fraction} * (100% - 32px) + 16px);"></div>
@@ -264,23 +265,26 @@ function homeScreen() {
         <p class="neo-sub">Know when you're close enough to cheer each other on.</p>
       </div>
 
-      <button class="role-card" data-action="goto" data-screen="create">
-        <span class="role-badge coral">${ICONS.runner}</span>
-        <span class="role-copy">
-          <strong>I'm Running</strong>
-          <span>Share your location during the race</span>
-        </span>
-        <span class="role-arrow">→</span>
-      </button>
+      <div class="role-stack">
+        <p class="section-label coral">Choose your role</p>
+        <button class="role-card" data-action="goto" data-screen="create">
+          <span class="role-badge coral">${ICONS.runner}</span>
+          <span class="role-copy">
+            <strong>I'm Running</strong>
+            <span>Share your live location during the race</span>
+          </span>
+          <span class="role-arrow">→</span>
+        </button>
 
-      <button class="role-card" data-action="goto" data-screen="join">
-        <span class="role-badge electric">${ICONS.spectator}</span>
-        <span class="role-copy">
-          <strong>I'm Spectating</strong>
-          <span>Track the runner &amp; get proximity alerts</span>
-        </span>
-        <span class="role-arrow">→</span>
-      </button>
+        <button class="role-card" data-action="goto" data-screen="join">
+          <span class="role-badge electric">${ICONS.spectator}</span>
+          <span class="role-copy">
+            <strong>I'm Spectating</strong>
+            <span>Track the runner and get proximity alerts</span>
+          </span>
+          <span class="role-arrow">→</span>
+        </button>
+      </div>
     </div>`;
 }
 
@@ -291,30 +295,41 @@ function createScreen() {
     ${statusBar()}
     ${navBar('Start Running', { back: true })}
     <div class="neo-body">
-      <span class="neo-label" style="background: var(--coral); align-self: flex-start;">Runner</span>
-
-      <div class="neo-field">
-        <span class="neo-label" style="align-self: flex-start;">Your Name</span>
-        <input class="neo-input" placeholder="Sarah" value="${esc(name)}" data-action="runner-name" ${hasCode ? 'disabled' : ''} />
-        <p class="neo-caption">Spectators will see this name when you're nearby.</p>
+      <div>
+        <p class="neo-heading">Set up your race session</p>
+        <p class="neo-sub" style="margin-top: 6px;">Spectators will use the code you generate to find you.</p>
       </div>
 
-      <div>
-        <span class="neo-label" style="background: var(--mint-soft);">Course</span>
-        <div class="neo-card mint-soft" style="padding: 16px; margin-top: 12px; font-weight: 900;">SF Marathon 2026</div>
+      <div class="neo-field">
+        <label class="field-label" for="runner-name">Your name</label>
+        <input id="runner-name" class="neo-input" placeholder="e.g. Sarah" value="${esc(name)}" data-action="runner-name" ${hasCode ? 'disabled' : ''} />
+        <p class="neo-caption">Shown to spectators when you're nearby.</p>
+      </div>
+
+      <div class="block">
+        <p class="section-label mint">Course</p>
+        <div class="fact-row mint">
+          <span class="fact-key">Event</span>
+          <span class="fact-value">SF Marathon 2026</span>
+        </div>
       </div>
 
       ${hasCode ? `
-        <div>
-          <span class="neo-label">Session Code</span>
-          <div class="neo-card" style="padding: 20px; margin-top: 12px; display: flex; flex-direction: column; gap: 12px;">
+        <div class="block">
+          <p class="section-label">Session code</p>
+          <div class="neo-card neo-card-pad" style="display: flex; flex-direction: column; gap: 14px; align-items: stretch;">
             <p class="code-display">${esc(state.sessionCode)}</p>
-            <button class="neo-btn sun">Share Code</button>
+            <p class="neo-caption" style="text-align: center;">Share this with spectators — it's how they join.</p>
+            <button class="neo-btn secondary sun" type="button">Share code</button>
           </div>
         </div>
-        <button class="neo-btn lime" data-action="goto" data-screen="runner">Continue to Dashboard</button>
+        <div class="form-actions">
+          <button class="neo-btn lime primary" data-action="goto" data-screen="runner">Continue to dashboard</button>
+        </div>
       ` : `
-        <button class="neo-btn" data-action="create-session" ${name.trim() ? '' : 'disabled'}>Start Session</button>
+        <div class="form-actions">
+          <button class="neo-btn primary" data-action="create-session" ${name.trim() ? '' : 'disabled'}>Start session</button>
+        </div>
       `}
     </div>`;
 }
@@ -325,19 +340,25 @@ function joinScreen() {
     ${statusBar()}
     ${navBar('Join as Spectator', { back: true })}
     <div class="neo-body">
-      <div class="neo-field">
-        <span class="neo-label" style="align-self: flex-start;">Your Name</span>
-        <input class="neo-input" placeholder="Tanay" value="${esc(state.spectatorName)}" data-action="spectator-name" />
+      <div>
+        <p class="neo-heading">Join a runner</p>
+        <p class="neo-sub" style="margin-top: 6px;">Enter the 6-character code they shared with you.</p>
       </div>
 
       <div class="neo-field">
-        <span class="neo-label" style="align-self: flex-start;">Session Code</span>
-        <input class="neo-input" placeholder="SF26AB" value="${esc(state.joinCode)}" data-action="join-code" style="text-transform: uppercase;" />
+        <label class="field-label" for="spectator-name">Your name</label>
+        <input id="spectator-name" class="neo-input" placeholder="e.g. Tanay" value="${esc(state.spectatorName)}" data-action="spectator-name" />
       </div>
 
-      <p class="neo-caption">Ask the runner for their 6-character session code.</p>
+      <div class="neo-field">
+        <label class="field-label" for="join-code">Session code</label>
+        <input id="join-code" class="neo-input" placeholder="SF26AB" value="${esc(state.joinCode)}" data-action="join-code" style="text-transform: uppercase; font-family: var(--font-mono); letter-spacing: 0.08em;" />
+        <p class="neo-caption">Ask the runner for their code if you don't have it.</p>
+      </div>
 
-      <button class="neo-btn electric" data-action="join-session" ${canJoin ? '' : 'disabled'}>Join Session</button>
+      <div class="form-actions">
+        <button class="neo-btn electric primary" data-action="join-session" ${canJoin ? '' : 'disabled'}>Join session</button>
+      </div>
     </div>`;
 }
 
@@ -348,35 +369,36 @@ function runnerScreen(withAlert) {
     ${navBar('Running', { right: '<button data-action="goto" data-screen="settings">Settings</button>' })}
     <div class="neo-body tight">
       <div class="neo-card status-card">
-        <div class="role-badge lime">${ICONS.pinDrop}</div>
-        <h2>SHARING LOCATION</h2>
-        <p class="neo-sub">Spectators see you on the map. You'll get a Watch alert when someone is within your set distance.</p>
+        <span class="status-chip">Live</span>
+        <h2 class="neo-heading">Sharing location</h2>
+        <p class="neo-sub">Spectators can see you on the map. Your Watch will alert when someone is within range.</p>
       </div>
 
       ${alert ? alertBanner(alert) : ''}
 
-      <div>
-        <span class="neo-label">Session Code</span>
-        <div class="neo-card" style="padding: 16px; margin-top: 10px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
-          <p class="code-display" style="text-align: left; font-size: 32px;">${esc(state.sessionCode || DEFAULTS.sessionCode)}</p>
-          <button class="neo-btn sun">Share with spectators</button>
+      <div class="block">
+        <p class="section-label">Session code</p>
+        <div class="neo-card neo-card-pad" style="display: flex; flex-direction: column; gap: 12px;">
+          <p class="code-display left">${esc(state.sessionCode || DEFAULTS.sessionCode)}</p>
+          <button class="neo-btn secondary sun" type="button">Share with spectators</button>
         </div>
       </div>
 
-      <div>
-        <span class="neo-label" style="background: var(--mint-soft);">GPS</span>
-        <div class="neo-card" style="padding: 14px 16px; margin-top: 10px;">
-          <p class="neo-caption" style="font-family: ui-monospace, Menlo, monospace;">
-            ${snapshot().runner.map((v) => v.toFixed(5)).join(', ')}
-          </p>
+      <div class="block">
+        <p class="section-label coral">Alert distance</p>
+        <div class="neo-card neo-card-pad">
+          ${slider({
+            value: state.runnerThreshold,
+            accent: 'coral',
+            hint: 'Notify me when a spectator is within this range',
+          })}
         </div>
       </div>
 
-      <div>
-        <span class="neo-label" style="background: var(--coral);">Alert Distance</span>
-        <div class="neo-card" style="padding: 16px; margin-top: 10px;">
-          <p class="neo-sub" style="margin-bottom: 14px;">Notify me when a spectator is within:</p>
-          ${slider({ value: state.runnerThreshold, accent: 'coral' })}
+      <div class="block">
+        <p class="section-label mint">GPS</p>
+        <div class="neo-card flat neo-card-pad" style="background: #f7f2e3;">
+          <p class="gps-mono">${snapshot().runner.map((v) => v.toFixed(5)).join(', ')}</p>
         </div>
       </div>
     </div>`;
@@ -415,13 +437,13 @@ function collapsedSheet(snap) {
           <strong>${esc(state.runnerName || DEFAULTS.runnerName)}</strong>
           <span>to your location</span>
         </div>
+        <div class="sheet-metric primary">
+          <b>${snap.distanceText}</b>
+          <small>Away</small>
+        </div>
         <div class="sheet-metric">
           <b>${snap.etaText || '—'}</b>
           <small>ETA</small>
-        </div>
-        <div class="sheet-metric">
-          <b>${snap.distanceText}</b>
-          <small>away</small>
         </div>
         ${ICONS.chevronUp}
       </div>
@@ -437,22 +459,27 @@ function expandedSheet(snap) {
         ${ICONS.chevronDown}
       </div>
 
-      <span class="neo-label" style="background: var(--electric-bright); align-self: flex-start;">Distance</span>
       <div>
-        <p class="neo-sub">Runner to you</p>
-        <p class="big-distance">${snap.distanceText}</p>
+        <p class="section-label electric">Distance</p>
+        <p class="metric-caption">Runner to you</p>
+        <p class="hero-value">${snap.distanceText}</p>
       </div>
 
       ${snap.etaText ? `
-        <div>
-          <p class="neo-sub" style="margin-bottom: 10px;">Estimated arrival at your spot</p>
-          <div class="neo-card sun eta-chip">${snap.etaText}</div>
+        <div class="eta-pill">
+          <b>${snap.etaText}</b>
+          <span>ETA</span>
         </div>
       ` : `<p class="neo-sub">Runner has passed your spot.</p>`}
 
       <hr class="neo-divider" />
 
-      ${slider({ value: state.spectatorThreshold, accent: 'electric', label: 'Alert Distance' })}
+      ${slider({
+        value: state.spectatorThreshold,
+        accent: 'electric',
+        label: 'Alert distance',
+        hint: 'Notify me when the runner is this close',
+      })}
     </div>`;
 }
 
@@ -472,7 +499,7 @@ function settingsScreen() {
     ${navBar('Settings', { right: '<button data-action="back">Done</button>' })}
     <div class="neo-body">
       <div class="settings-group">
-        <span class="neo-label" style="background: var(--lavender-soft); align-self: flex-start;">You</span>
+        <p class="section-label lavender">You</p>
         <div class="neo-card settings-rows">
           <div class="settings-row"><dt>Name</dt><dd>${esc(state.spectatorName || DEFAULTS.spectatorName)}</dd></div>
           <div class="settings-row"><dt>Role</dt><dd>Spectator</dd></div>
@@ -480,7 +507,7 @@ function settingsScreen() {
       </div>
 
       <div class="settings-group">
-        <span class="neo-label" style="align-self: flex-start;">Session</span>
+        <p class="section-label">Session</p>
         <div class="neo-card settings-rows">
           <div class="settings-row"><dt>Code</dt><dd>${esc(state.sessionCode || DEFAULTS.sessionCode)}</dd></div>
           <div class="settings-row"><dt>Course</dt><dd>SF Marathon 2026</dd></div>
@@ -488,14 +515,16 @@ function settingsScreen() {
       </div>
 
       <div class="settings-group">
-        <span class="neo-label" style="background: var(--mint-soft); align-self: flex-start;">Permissions</span>
+        <p class="section-label mint">Permissions</p>
         <div class="neo-card settings-rows">
           <div class="settings-row"><dt>Location</dt><dd>While Using</dd></div>
           <div class="settings-row"><dt>Notifications</dt><dd>Allowed</dd></div>
         </div>
       </div>
 
-      <button class="neo-btn pink" data-action="leave">Leave Session</button>
+      <div class="form-actions">
+        <button class="neo-btn danger" data-action="leave">Leave session</button>
+      </div>
     </div>`;
 }
 
@@ -520,15 +549,15 @@ function watchFace() {
     const alert = state.alert || { name: DEFAULTS.spectatorName, distanceMeters: 180 };
     return `
       <div class="watch-content">
-        <span class="neo-label" style="background: var(--pink-soft);">Alert</span>
+        <span class="status-chip alert">Alert</span>
         <p class="watch-name">${esc(alert.name)}</p>
-        <p class="watch-shout">NEARBY!</p>
+        <p class="watch-shout">NEARBY</p>
         <p class="watch-meta">~${Math.round(alert.distanceMeters)} m</p>
       </div>`;
   }
   return `
     <div class="watch-content">
-      <span class="neo-label" style="background: var(--lime-bright);">Tracking</span>
+      <span class="status-chip">Live</span>
       <p class="watch-time">2:14:32</p>
       <p class="watch-meta">${state.runnerThreshold} m alert</p>
       <p class="watch-meta">${snap.distanceText} to ${esc(state.spectatorName || DEFAULTS.spectatorName)}</p>
@@ -745,12 +774,14 @@ function tick(now) {
 function refreshLiveText() {
   const snap = snapshot();
   const metrics = document.querySelectorAll('.sheet-metric b');
-  if (metrics.length === 2) {
-    metrics[0].textContent = snap.etaText || '—';
-    metrics[1].textContent = snap.distanceText;
+  if (metrics.length >= 2) {
+    metrics[0].textContent = snap.distanceText;
+    metrics[1].textContent = snap.etaText || '—';
   }
-  const big = document.querySelector('.big-distance');
+  const big = document.querySelector('.hero-value');
   if (big) big.textContent = snap.distanceText;
+  const etaPill = document.querySelector('.eta-pill b');
+  if (etaPill && snap.etaText) etaPill.textContent = snap.etaText;
 
   const banner = document.querySelector('.map-overlay > div');
   if (banner) banner.innerHTML = state.alert ? alertBanner(state.alert) : '';
