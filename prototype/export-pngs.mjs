@@ -45,8 +45,12 @@ async function capture(page, { target, screen, file, selector }) {
 }
 
 async function main() {
-  await rm(outDir, { recursive: true, force: true });
   await mkdir(outDir, { recursive: true });
+  // Remove previous PNGs only — keep README.md and other docs in this folder.
+  const { readdir, unlink } = await import('node:fs/promises');
+  for (const name of await readdir(outDir)) {
+    if (name.endsWith('.png')) await unlink(join(outDir, name));
+  }
 
   const browser = await puppeteer.launch({
     headless: 'new',
